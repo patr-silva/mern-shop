@@ -1,0 +1,36 @@
+{
+  "name": "mern",
+  "version": "1.0.0",
+  "description": "Mern App ",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node backend/seeder",
+    "data:destroy": "node backend/seeder -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patr-silva/mern-shop.git"
+  },
+  "author": "Patricia Silva",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/patr-silva/mern-shop/issues"
+  },
+  "homepage": "https://github.com/patr-silva/mern-shop#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.1.0",
+    "nodemon": "^2.0.22"
+  }
+}
