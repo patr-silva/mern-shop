@@ -1,50 +1,90 @@
-// import axios from "axios";
-// import { useState, useEffect } from "react";
-import { useGetProductsQuery } from "../slices/productsApiSlice";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router";
 
-import { Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-import Product from "../components/Product";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import { Row, Col, Image, ListGroup, Card, Button } from "react-bootstrap";
 
-const HomeScreen = () => {
-  // const [products, setProducts] = useState([]);
+import Rating from "../components/Rating";
 
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     const { data } = await axios.get("/api/products");
-  //     setProducts(data);
-  //   };
-  //   fetchProducts();
-  // }, []);
 
-  const { data: products, isLoading, error } = useGetProductsQuery();
+const ProductScreen = () => {
+  const { id: productId } = useParams();
+  const [product, setProduct] = useState({});
+  
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${productId}`);
+      setProduct(data);
+    };
+
+    fetchProduct();
+  }, [productId]);
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant='danger'>
-          {error?.data?.message || error.error}
-        </Message>
-      ) : (
-        <>
-          <h1>Latest Products</h1>
-          <Row>
-            {products.map((elem, index) => {
-              return (
-                <Col sm={12} md={6} lg={4} xl={3} key={index}>
-                  <Product product={elem} />
-                </Col>
-              );
-            })}
-          </Row>
-        </>
-      )}
+      <Link className='btn btn-light my-3' to='/'>
+        Go Back
+      </Link>
+
+      <Row>
+        <Col md={5}>
+          <Image src={product.image} alt={product.name} fluid />
+        </Col>
+        <Col md={4}>
+          <ListGroup variant='flush'>
+            <ListGroup.Item>
+              <h3>{product.name}</h3>
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <Rating
+                value={product.rating}
+                text={`${product.numReviews} reviews`}
+              />
+            </ListGroup.Item>
+            <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+            <ListGroup.Item>Description: {product.description}</ListGroup.Item>
+          </ListGroup>
+        </Col>
+        <Col md={3}>
+          <Card>
+            <ListGroup variant='flush'>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Price:</Col>
+                  <Col>
+                    <strong>${product.price}</strong>
+                  </Col>
+                </Row>
+              </ListGroup.Item>
+
+              <ListGroup.Item></ListGroup.Item>
+              <ListGroup.Item>
+                <Row>
+                  <Col>Status:</Col>
+                  <Col>
+                    <strong>
+                      {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
+                    </strong>
+                  </Col>
+                </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <Button
+                  className='btn-block'
+                  type='button'
+                  disabled={product.countInStock === 0}
+                >
+                  Add to Cart
+                </Button>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card>
+        </Col>
+      </Row>
     </>
   );
 };
 
-export default HomeScreen;
+export default ProductScreen;
